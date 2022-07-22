@@ -1,5 +1,5 @@
 <template lang="pug">
-img(alt="Vue logo" src="./assets/logo.png")
+labelJsx
 HelloWorld(msg="Welcome to Your Vue.js App")
 select(v-model="user")
   option(value="") ユーザーを選択してください
@@ -11,12 +11,14 @@ CompositionSample
 <script>
 import HelloWorld from './components/HelloWorld.vue'
 import CompositionSample from './components/CompositionSample.vue'
+import LabelJsx from './components/LabelJsx.vue'
 
 export default {
   name: 'App',
   components: {
     HelloWorld,
-    CompositionSample
+    CompositionSample,
+    LabelJsx
   },
   data () {
     return {
