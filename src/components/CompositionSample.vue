@@ -80,6 +80,8 @@ export default {
 
     const getUserRepositories = async () => {
       repoLoaded.value = false
+      repositories.value = []
+
       // eslint-disable-next-line vue/valid-next-tick
       await nextTick(async () => {
         repositories.value = await fetchUserRepositories(user.value)
