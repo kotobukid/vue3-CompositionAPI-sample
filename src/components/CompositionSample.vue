@@ -18,12 +18,13 @@
         td {{ r.created_at }}
     tbody(v-if="filteredRepositories.length === 0")
       tr
-        td(colspan="2") 条件を満たすリポジトリがありません
+        td(colspan="2" v-if="repoLoaded") 条件を満たすリポジトリがありません
+        td(colspan="2" v-if="!repoLoaded") リポジトリを読み込んでいます
 
 </template>
 
 <script>
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
 
 // const counter = ref(0)
 //
@@ -54,13 +55,18 @@ export default {
     }
   },
   setup (props) {
+    const repoLoaded = ref(false)
     const repositories = ref([])
     const getUserRepositories = async () => {
       repositories.value = await fetchUserRepositories(props.user)
+      repoLoaded.value = true
     }
+
+    onMounted(getUserRepositories)
 
     return {
       repositories,
+      repoLoaded,
       getUserRepositories // 返される関数は methods と同様の振る舞いをします
     }
   },
@@ -98,9 +104,6 @@ export default {
     updateFilters () {
       alert('!')
     } // 3
-  },
-  mounted () {
-    this.getUserRepositories()
   }
 }
 </script>
