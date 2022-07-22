@@ -1,15 +1,18 @@
 <template lang="pug">
 img(alt="Vue logo" src="./assets/logo.png")
 HelloWorld(msg="Welcome to Your Vue.js App")
+CompositionSample
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
+import CompositionSample from './components/CompositionSample.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HelloWorld,
+    CompositionSample
   }
 }
 </script>
