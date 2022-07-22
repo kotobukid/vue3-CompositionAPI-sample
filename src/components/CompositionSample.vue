@@ -31,6 +31,10 @@ export default {
       required: true
     }
   },
+  setup (props) {
+    console.log(props)
+    return {}
+  },
   data () {
     return {
       repositories: [],
