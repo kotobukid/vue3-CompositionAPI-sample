@@ -13,10 +13,10 @@
         th 名前
         th 作成日
     tbody
-      tr(v-for="r in filteredRepositories")
+      tr(v-for="r in repositories")
         td {{ r.name }}
         td {{ r.created_at }}
-    tbody(v-if="filteredRepositories.length === 0")
+    tbody(v-if="repositories.length === 0")
       tr
         td(colspan="2" v-if="repoLoaded") 条件を満たすリポジトリがありません
         td(colspan="2" v-if="!repoLoaded") リポジトリを読み込んでいます
@@ -24,45 +24,9 @@
 </template>
 
 <script>
-import {ref, onMounted, watch, toRefs, nextTick, computed} from 'vue'
-
-// const counter = ref(0)
-//
-// console.log(counter) // { value: 0 }
-// console.log(counter.value) // 0
-//
-// counter.value++
-// console.log(counter.value) // 1
-
-// const counter = ref(0)
-// watch(counter, (newValue, oldValue) => {
-//   console.log('The new counter value is: ' + counter.value)
-// })
-// counter.value = 100
-
-const counter = ref(0)
-const twiceTheCounter = computed(() => counter.value * 2)
-
-counter.value++
-console.log(counter.value) // 1
-console.log(twiceTheCounter.value) // 2
-
-const fetchUserRepositories = (user) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const repos = [
-        { name: 'hoge repo', created_at: '2020-01-01', owner: 'kotobuki' },
-        { name: 'fuga repo', created_at: '2020-01-02', owner: 'kotobuki' },
-        { name: 'AAA repo', created_at: '2022-01-01', owner: 'manjusai' },
-        { name: 'BBB repo', created_at: '2022-01-02', owner: 'manjusai' }
-      ]
-
-      resolve(repos.filter(r => {
-        return r.owner === user
-      }))
-    }, 1000)
-  })
-}
+import {toRefs} from 'vue'
+import useUserRepositories from '../composables/useUserRepositories'
+import useRepositoryNameSearch from '../composables/useRepositoriesNameSearch'
 
 export default {
   components: {},
@@ -74,65 +38,26 @@ export default {
   },
   setup (props) {
     const { user } = toRefs(props)
-    const repoLoaded = ref(false)
-    const repositories = ref([])
-    const searchQuery = ref('')
 
-    const getUserRepositories = async () => {
-      repoLoaded.value = false
-      repositories.value = []
-
-      // eslint-disable-next-line vue/valid-next-tick
-      await nextTick(async () => {
-        repositories.value = await fetchUserRepositories(user.value)
-        repoLoaded.value = true
-      })
-    }
-
-    onMounted(getUserRepositories)
-
-    watch(user, getUserRepositories)
-
-    const filteredRepositories = computed(() => {
-      return repositories.value.filter(f => {
-        if (searchQuery.value !== '') {
-          return repositories.value.filter((f) => {
-            return f.name.includes(searchQuery.value) > -1
-          })
-        } else {
-          return repositories.value
-        }
-      })
-    })
+    const { repositories, repoLoaded, getUserRepositories } = useUserRepositories(user)
+    const { searchQuery, repositoriesMatchingSearchQuery } = useRepositoryNameSearch(repositories)
 
     return {
-      // repositories,
+      searchQuery,
       repoLoaded,
-      filteredRepositories,
-      getUserRepositories // 返される関数は methods と同様の振る舞いをします
+      repositories: repositoriesMatchingSearchQuery,
+      getUserRepositories
     }
   },
   data () {
     return {
-      // repositories: [],
       filters: {}
     }
   },
-  computed: {
-    repositoriesMatchingSearchQuery () {
-      return 'hogege'
-    } // 2
-  },
   methods: {
-    // getUserRepositories () {
-    //   this.repositories = [
-    //     { name: 'hoge repo', created_at: '2020-01-01' },
-    //     { name: 'fuga repo', created_at: '2020-01-02' }
-    //   ]
-    // },
     updateFilters () {
       alert('!')
-    } // 3
+    }
   }
 }
 </script>
