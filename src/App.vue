@@ -4,8 +4,8 @@ HelloWorld(msg="Welcome to Your Vue.js App")
 select(v-model="user")
   option(value="") ユーザーを選択してください
   option(v-for="u in users" :value="u" v-text="u")
-//CompositionSample(:user="user")
-CompositionSample
+CompositionSample(:user="user")
+
 </template>
 
 <script>
