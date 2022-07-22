@@ -23,6 +23,28 @@
 </template>
 
 <script>
+import {ref} from 'vue'
+
+// const counter = ref(0)
+//
+// console.log(counter) // { value: 0 }
+// console.log(counter.value) // 0
+//
+// counter.value++
+// console.log(counter.value) // 1
+
+const fetchUserRepositories = (user) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(user)
+      resolve([
+        { name: 'hoge repo', created_at: '2020-01-01' },
+        { name: 'fuga repo', created_at: '2020-01-02' }
+      ])
+    }, 1000)
+  })
+}
+
 export default {
   components: {},
   props: {
@@ -32,12 +54,19 @@ export default {
     }
   },
   setup (props) {
-    console.log(props)
-    return {}
+    const repositories = ref([])
+    const getUserRepositories = async () => {
+      repositories.value = await fetchUserRepositories(props.user)
+    }
+
+    return {
+      repositories,
+      getUserRepositories // 返される関数は methods と同様の振る舞いをします
+    }
   },
   data () {
     return {
-      repositories: [],
+      // repositories: [],
       filters: {},
       searchQuery: '' // 2
     }
@@ -60,12 +89,12 @@ export default {
     user: 'getUserRepositories' // 1
   },
   methods: {
-    getUserRepositories () {
-      this.repositories = [
-        { name: 'hoge repo', created_at: '2020-01-01' },
-        { name: 'fuga repo', created_at: '2020-01-02' }
-      ]
-    },
+    // getUserRepositories () {
+    //   this.repositories = [
+    //     { name: 'hoge repo', created_at: '2020-01-01' },
+    //     { name: 'fuga repo', created_at: '2020-01-02' }
+    //   ]
+    // },
     updateFilters () {
       alert('!')
     } // 3
