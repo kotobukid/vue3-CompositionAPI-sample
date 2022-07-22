@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import {ref, onMounted, watch, toRefs, nextTick} from 'vue'
+import {ref, onMounted, watch, toRefs, nextTick, computed} from 'vue'
 
 // const counter = ref(0)
 //
@@ -34,17 +34,22 @@ import {ref, onMounted, watch, toRefs, nextTick} from 'vue'
 // counter.value++
 // console.log(counter.value) // 1
 
+// const counter = ref(0)
+// watch(counter, (newValue, oldValue) => {
+//   console.log('The new counter value is: ' + counter.value)
+// })
+// counter.value = 100
+
 const counter = ref(0)
-watch(counter, (newValue, oldValue) => {
-  console.log('The new counter value is: ' + counter.value)
-})
-counter.value = 100
+const twiceTheCounter = computed(() => counter.value * 2)
+
+counter.value++
+console.log(counter.value) // 1
+console.log(twiceTheCounter.value) // 2
 
 const fetchUserRepositories = (user) => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      console.log(user)
-
       const repos = [
         { name: 'hoge repo', created_at: '2020-01-01', owner: 'kotobuki' },
         { name: 'fuga repo', created_at: '2020-01-02', owner: 'kotobuki' },
@@ -71,12 +76,13 @@ export default {
     const { user } = toRefs(props)
     const repoLoaded = ref(false)
     const repositories = ref([])
+    const searchQuery = ref('')
 
     const getUserRepositories = async () => {
       repoLoaded.value = false
       // eslint-disable-next-line vue/valid-next-tick
       await nextTick(async () => {
-        repositories.value = await fetchUserRepositories(props.user)
+        repositories.value = await fetchUserRepositories(user.value)
         repoLoaded.value = true
       })
     }
@@ -85,29 +91,32 @@ export default {
 
     watch(user, getUserRepositories)
 
+    const filteredRepositories = computed(() => {
+      return repositories.value.filter(f => {
+        if (searchQuery.value !== '') {
+          return repositories.value.filter((f) => {
+            return f.name.includes(searchQuery.value) > -1
+          })
+        } else {
+          return repositories.value
+        }
+      })
+    })
+
     return {
-      repositories,
+      // repositories,
       repoLoaded,
+      filteredRepositories,
       getUserRepositories // 返される関数は methods と同様の振る舞いをします
     }
   },
   data () {
     return {
       // repositories: [],
-      filters: {},
-      searchQuery: '' // 2
+      filters: {}
     }
   },
   computed: {
-    filteredRepositories () {
-      if (this.searchQuery !== '') {
-        return this.repositories.filter((f) => {
-          return f.name.indexOf(this.filters) > -1
-        })
-      } else {
-        return this.repositories
-      }
-    }, // 3
     repositoriesMatchingSearchQuery () {
       return 'hogege'
     } // 2
