@@ -1,4 +1,6 @@
 <script lang="jsx">
+import {toRefs} from 'vue'
+
 export default {
   props: {
     label: {
@@ -7,8 +9,10 @@ export default {
     }
   },
   setup (props) {
+    const {label} = toRefs(props)
+
     return () => (
-      <div>Hello</div>
+      <div>{ label.value }</div>
     )
   }
 }

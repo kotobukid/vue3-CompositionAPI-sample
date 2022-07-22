@@ -1,5 +1,5 @@
 <template lang="pug">
-labelJsx
+labelJsx(label="hello jsx")
 HelloWorld(msg="Welcome to Your Vue.js App")
 select(v-model="user")
   option(value="") ユーザーを選択してください
