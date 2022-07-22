@@ -1,6 +1,8 @@
 <template lang="pug">
 .hello
   h1 {{ msg }}
+  ul
+    li(v-for="i in items" v-text="i")
 </template>
 
 <script>
@@ -8,6 +10,11 @@ const o = {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data () {
+    return {
+      items: [1, 2, 3, 4, 5]
+    }
   }
 }
 
