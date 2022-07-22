@@ -1,7 +1,10 @@
 <template lang="pug">
 img(alt="Vue logo" src="./assets/logo.png")
 HelloWorld(msg="Welcome to Your Vue.js App")
-CompositionSample(user="kotobuki")
+select(v-model="user")
+  option(value="") ユーザーを選択してください
+  option(v-for="u in users" :value="u" v-text="u")
+CompositionSample(:user="user")
 </template>
 
 <script>
@@ -13,6 +16,12 @@ export default {
   components: {
     HelloWorld,
     CompositionSample
+  },
+  data () {
+    return {
+      users: ['kotobuki', 'manjusai'],
+      user: ''
+    }
   }
 }
 </script>

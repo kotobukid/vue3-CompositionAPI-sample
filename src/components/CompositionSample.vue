@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, watch, toRefs, nextTick} from 'vue'
 
 // const counter = ref(0)
 //
@@ -34,14 +34,27 @@ import {ref, onMounted} from 'vue'
 // counter.value++
 // console.log(counter.value) // 1
 
+const counter = ref(0)
+watch(counter, (newValue, oldValue) => {
+  console.log('The new counter value is: ' + counter.value)
+})
+counter.value = 100
+
 const fetchUserRepositories = (user) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       console.log(user)
-      resolve([
-        { name: 'hoge repo', created_at: '2020-01-01' },
-        { name: 'fuga repo', created_at: '2020-01-02' }
-      ])
+
+      const repos = [
+        { name: 'hoge repo', created_at: '2020-01-01', owner: 'kotobuki' },
+        { name: 'fuga repo', created_at: '2020-01-02', owner: 'kotobuki' },
+        { name: 'AAA repo', created_at: '2022-01-01', owner: 'manjusai' },
+        { name: 'BBB repo', created_at: '2022-01-02', owner: 'manjusai' }
+      ]
+
+      resolve(repos.filter(r => {
+        return r.owner === user
+      }))
     }, 1000)
   })
 }
@@ -55,14 +68,22 @@ export default {
     }
   },
   setup (props) {
+    const { user } = toRefs(props)
     const repoLoaded = ref(false)
     const repositories = ref([])
+
     const getUserRepositories = async () => {
-      repositories.value = await fetchUserRepositories(props.user)
-      repoLoaded.value = true
+      repoLoaded.value = false
+      // eslint-disable-next-line vue/valid-next-tick
+      await nextTick(async () => {
+        repositories.value = await fetchUserRepositories(props.user)
+        repoLoaded.value = true
+      })
     }
 
     onMounted(getUserRepositories)
+
+    watch(user, getUserRepositories)
 
     return {
       repositories,
@@ -90,9 +111,6 @@ export default {
     repositoriesMatchingSearchQuery () {
       return 'hogege'
     } // 2
-  },
-  watch: {
-    user: 'getUserRepositories' // 1
   },
   methods: {
     // getUserRepositories () {
