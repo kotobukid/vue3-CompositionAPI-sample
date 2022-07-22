@@ -1,5 +1,6 @@
 <template lang="pug">
 .composition_sample
+  span.user {{ user }}
   input(type="text" v-model="searchQuery")
   br
   span {{ searchQuery }}
@@ -33,7 +34,8 @@ export default {
   props: {
     user: {
       type: String,
-      required: true
+      required: true,
+      default: 'hage'
     }
   },
   setup (props) {
